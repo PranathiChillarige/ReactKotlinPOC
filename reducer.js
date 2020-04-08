@@ -90,13 +90,9 @@ const initialState = {
             };
         break;
         case "FORM_INSIDE":
-        var name=state.EventObject[action.payload.target.name]
-            console.log("name",name)
-            console.log("value",action.payload.target.value)
-            console.log("qqd",state.EventObject.ID)
         return {
           ...state,
-          // :action.payload.target.value
+           EventObject[action.payload.target.name]:action.payload.target.value
         };
         break;
         
