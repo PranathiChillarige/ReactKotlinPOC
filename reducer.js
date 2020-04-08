@@ -1,5 +1,8 @@
+
+import axios from 'axios';
 const initialState = {
     visible:false,
+    visibleEdit:false,
     uniqueID:"",
     EventObject:{
         ID:"",
@@ -7,7 +10,12 @@ const initialState = {
         CreatedBy:"",
         Date:""
     },
-    history: []
+    history: [],
+    AllCountries: [],
+    countries:[],
+    GetAll:false,
+    GetByRegion:false
+
   };
   
   const reducer = (state = initialState, action) => {
@@ -15,7 +23,10 @@ const initialState = {
   
     switch (action.type) {
       case "SAVE":
-          
+        axios.post(`http://localhost:8081/saveEvent`,state.EventObject)
+        .then(res => {
+          console.log(res.data);
+        })
         return {
           ...state,
           history: state.history.concat({ id: Math.random(), EventObject: state.EventObject }),
@@ -28,6 +39,15 @@ const initialState = {
           ...state,
           visible: true,
         };
+        case "EDIT":
+          axios.post(`http://localhost:8081/editEvent/${state.EventObject.ID}`,state.EventObject)
+        .then(res => {
+          console.log(res.data);
+        })
+          return {
+            ...state,
+            visibleEdit: true,
+          };
         break;
         case "UNIQUE_ID":
         return {
@@ -40,16 +60,51 @@ const initialState = {
           ...state,
           visible: false,
         };
+        case "All_COUNTRIES":
+          return {
+            ...state,
+            GetAll:true,
+            GetByRegion:false
+          };
+          case "COUNTRY_BY_REGION":
+            console.log("in region");
+            var re = [action.payload.target.value]
+        axios.get(`https://restcountries.eu/rest/v2/all/${re}`)
+        .then(res => {
+          const countries = res.data;
+          this.setState({ countries });
+        })
+       
+            return {
+              ...state,
+              GetAll:false,
+              GetByRegion:true
+            };
+        break;
+        case "All_COUNTRIES_INITIAL":
+          console.log("in Initial")
+            return {
+              ...state,
+              AllCountries:action.payload
+             
+            };
         break;
         case "FORM_INSIDE":
-            console.log("handleChange called",action.payload.target.value);
+        var name=state.EventObject[action.payload.target.name]
+            console.log("name",name)
+            console.log("value",action.payload.target.value)
+            console.log("qqd",state.EventObject.ID)
         return {
           ...state,
-          [action.payload.target.name]:action.payload.target.value
+          // :action.payload.target.value
         };
         break;
         
       case "DEL_EVENT":
+        axios.post(`http://localhost:8081/deleteEvent/${state.EventObject.ID}`)
+        .then(res => {
+          console.log(res.data);
+        })
         return {
           ...state,
           history: newState.history.filter((el)=> el.id !== action.id )
