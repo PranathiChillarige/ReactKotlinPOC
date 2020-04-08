@@ -4,9 +4,6 @@ import {Button,Table,Form,Container,Row,Col,Modal} from 'react-bootstrap';
 import { connect } from "react-redux";
 
 class EventComp extends React.Component{
-    
-    
-    
     render() {
         return(
             <React.Fragment>
@@ -32,17 +29,17 @@ class EventComp extends React.Component{
                                     </Form.Group>
                                     <Form.Group controlId="formEventName">
                                     <Form.Label>Event Name  :  </Form.Label>
-                                    <Form.Control type="text" name="Name" placeholder="Enter Event Name" 
+                                    <Form.Control type="text" name="Name" value={this.props.EventObject.Name} placeholder="Enter Event Name" 
                                     onChange={this.props.handleChange}/>
                                     </Form.Group>
                                     <Form.Group controlId="formEventCreatedBy">
                                         <Form.Label>Created By  :  </Form.Label>
-                                        <Form.Control type="text" name="CreatedBy" placeholder="Enter  Name" 
+                                        <Form.Control type="text" name="CreatedBy" value={this.props.EventObject.CreatedBy} placeholder="Enter  Name" 
                                         onChange={this.props.handleChange}/>
                                     </Form.Group>
                                     <Form.Group controlId="formEventDate">
                                         <Form.Label>Date  : </Form.Label>
-                                        <Form.Control type="date" name="Date"
+                                        <Form.Control type="date"value={this.props.EventObject.Date}  name="Date"
                                         onChange={this.props.handleChange}/>
                                     </Form.Group>
                                     </Form>
@@ -73,14 +70,16 @@ class EventComp extends React.Component{
                     {this.props.history.map(el => (
                         <tr
                          key={el.id}>
-                            <td>{el.EventObject.ID}</td>
+                            <td>{el.EventObject.id}</td>
                             <td>{el.EventObject.Name}</td>
                             <td>{el.EventObject.CreatedBy}</td>
                             <td>{el.EventObject.Date}</td>
                             <td>
                                 <Form>
                                     <Form.Group controlId="formBasicCheckbox">
-                                        <Form.Check type="checkbox" onClick={this.props.handleShow} label="" />
+                                        <Form.Check type="checkbox" 
+                                        onClick={() => { this.props.handleShow(); this.props.handleShowEdit();}}
+                                        />
                                     </Form.Group>
                                </Form>
                             </td> 
@@ -120,12 +119,13 @@ const mapStateToProps = state => {
   
   const mapDispachToProps = dispatch => {
     return {
-      handleSubmit: (e) => dispatch({ type: "SAVE", payload:e }),
+      handleSubmit: () => dispatch({ type: "SAVE", payload:"1" }),
       handleShow: () => dispatch({ type: "SHOW_POPUP", payload:"1" }),
       handleHide: () => dispatch({ type: "HIDE_POPUP", payload:"1"}),
       handleChange : (e) => dispatch({ type: "FORM_INSIDE", payload:e }),
       onDelEntry: (id) => dispatch({ type: "DEL_EVENT", id: id}),
-      handleEventID : () => dispatch({ type: "UNIQUE_ID", payload:"1"})
+      handleEventID : () => dispatch({ type: "UNIQUE_ID", payload:"1"}),
+      handleShowEdit : () => dispatch({ type: "EDIT", payload:"1"})
     };
   };
   export default connect(
